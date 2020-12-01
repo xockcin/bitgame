@@ -5,6 +5,8 @@ BitGame is a game that teaches the fundamentals of
 how data is represented in a computer, as well as
 how data can be manipulated using bitwise operators.
 
+![bitgame pic](https://github.com/xockcin/bitgame/blob/main/bitgame_pic.png)
+
 So far, all I've written is the game environment,
 which is just a small window with eight buttons in
 the center, representing the eight bits that make
