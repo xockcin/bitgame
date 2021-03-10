@@ -1,5 +1,6 @@
 import tkinter as tk
 import bitgame_proto as bg
+import random
 
 # initialize window
 window = tk.Tk()
@@ -103,6 +104,12 @@ buttonIncr.grid(row=2, column=0)
 # decrement button widget
 buttonDecr = tk.Button(master=window, text="-", command=btnDecr)
 buttonDecr.grid(row=2, column=7)
+
+# here is the actual game
+target = random.randint(0,255)
+showTarget = tk.Label(text="target: " + str(target))
+showDec.grid(row=3, column=1, columnspan=2)
+
 
 # and we're off!
 tk.mainloop()
