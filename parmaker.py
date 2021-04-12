@@ -1,19 +1,85 @@
+from PIL import Image
+import numpy as np
 from tkinter import * 
-SIZE = 256
+SIZE = 16
 
-def makerow(i):
+import json
+f = open('pairchart.json')
+full_pairs = json.load(f)
+
+def make_row(i):
     row = []
     for j in range(SIZE):
         row.append({"origin" : i, "goal" : j, "solved": False, "steps": ""})
     return row
 
-def makesquare():
+def make_square():
     pairs = []
     for i in range(SIZE):
-        pairs.append(makerow(i))
+        pairs.append(make_row(i))
     return pairs
 
-pairchart = makesquare()
+def make_stepcount_array(pairchart):
+    array = []
+    for row in pairchart:
+        array.append([len(data["steps"]) for data in row])
+    return array
+
+def steps_to_colors(steps_array):
+    colors_array = []
+    for row in steps_array:
+        colors_array.append([colors[x]["rgb"] for x in row])
+    return colors_array
+
+def steps_to_grayscale(steps_array):
+    grayscale_array = []
+    for row in steps_array:
+        grayscale_array.append([[x*25, x*25, x*25] for x in row])
+    return grayscale_array
+            
+
+colors = [
+    {"name": "black", "rgb": [0,0,0]},
+    {"name": "brown", "rgb": [165,42,42]},
+    {"name": "red", "rgb": [255,0,0]},
+    {"name": "orange", "rgb": [255,165,0]},
+    {"name": "yellow", "rgb": [255,255,0]},
+    {"name": "green", "rgb": [0,255,0]},
+    {"name": "blue", "rgb": [0,0,255]},
+    {"name": "violet", "rgb": [238,130,214]},
+    {"name": "grey", "rgb": [128,128,128]},
+    {"name": "white", "rgb": [255,255,255]},
+    {"name": "gold", "rgb": [255,215,0]}
+]
+
+def makeimgarray(nparray):
+    img_array = []
+    for x in nparray.reshape(SIZE*SIZE):
+        img_array.append(colors[x]["rgb"])
+    return img_array
+
+def makepiltable(data):
+    colors = [
+        "black",
+        "brown",
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "violet",
+        "grey",
+        "white",
+  ]
+    im = Image.new("RGB", (SIZE, SIZE))
+    height = SIZE
+    width = SIZE
+    for i in range(height): #Rows
+        for j in range(width): #Columns
+            stepcount = len(data[i][j]["steps"])
+            im.putpixel((i,j), ImageColor(colors[stepcount], "RGB"))
+    im.show()
+    
 
 def maketable(data):
     root = Tk()
@@ -23,16 +89,54 @@ def maketable(data):
     for i in range(height): #Rows
         for j in range(width): #Columns
             content = str(data[i][j]["origin"]) + "=>" + str(data[i][j]["goal"]) + ":" + data[i][j]["steps"]
-            b = Label(bg=("white" if data[i][j]["solved"] else "yellow"), text=content, borderwidth=2, width="12", relief="solid")
+            b = Label(
+                bg=("white" if data[i][j]["solved"] else "yellow"),
+                text=content,
+                borderwidth=2, width="12",
+                relief="solid")
             b.grid(row=i, column=j)
 
     mainloop()
     
+def makesmalltable(data):
+    colors = [
+        "black",
+        "brown",
+        "red",
+        "orange",
+        "yellow",
+        "green",
+        "blue",
+        "violet",
+        "grey",
+        "white",
+  ]
+    
+    root = Tk()
+    
+    height = SIZE
+    width = SIZE
+    for i in range(height): #Rows
+        for j in range(width): #Columns
+            stepcount = len(data[i][j]["steps"])
+            b = Label(
+                bg=(colors[stepcount]),
+                borderwidth=1,
+                height=1,
+                width=1,
+                relief="solid")
+            b.grid(row=i, column=j)
+
+    mainloop()
+
 def increment(i):
     return i+1
 
 def decrement(i):
-    return i-1
+    if i == 0:
+        return 255
+    else:
+        return i-1
 
 def complement(i):
     return SIZE - 1 - i
@@ -156,6 +260,25 @@ def find_unsolved():
             if pairchart[i][j]["solved"] == False:
                 still_unsolved.append(pairchart[i][j])
     return still_unsolved
+
+def do_small_steps():
+    print("zero step")
+    zerostep()
+    print("one step")
+    onestep()
+    print("two step")
+    doThing(doubles)
+    print("three step")
+    doThing(threes)
+    print("four step")
+    doThing(fours)
+    print("five step")
+    doThing(fives)
+    print("six step")
+    doThing(sixes)
+    print("seven step")
+    doThing(sevens)
+
 
 def do_the_steps():
     print("zero step")
